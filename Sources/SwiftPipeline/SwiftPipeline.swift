@@ -9,7 +9,7 @@
 import Foundation
 
 // Basic data type supported for Inputs, Outputs, Features and Metadata
-enum DataType {
+public enum DataType {
     case String(value: String)
     case StringArray(array: [String])
     case Float(value: Float)
@@ -19,41 +19,41 @@ enum DataType {
 }
 
 // Pipeline interface passed to Transformers for accessing Pipeline input stack and metadata
-protocol PipelineProtocol {
+public protocol PipelineProtocol {
     var inputs: [DataType] { get }
     var metadatas: [String : DataType] { get }
 }
 
 // Generic abstract Transormer interface 
-protocol TransformProtocol {
+public protocol TransformProtocol {
     var name: String { get }
 }
 
 // Specific Transform interface for implementing Mapper
-protocol MapperProtocol : TransformProtocol {
+public protocol MapperProtocol : TransformProtocol {
     func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void)
 }
 
 // Specific Transform interface for implementing Featurizer
-protocol FeaturizerProtocol : TransformProtocol {
+public protocol FeaturizerProtocol : TransformProtocol {
     func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void)
 }
 
 // Pipeline object to chain and execute several Mappar and Featurizer tranformers
-struct Pipeline : PipelineProtocol {
-    var inputs = [DataType]()
-    var metadatas = [String : DataType]()
-    var features = [DataType]()
-    var transformers = [TransformProtocol]()
+public struct Pipeline : PipelineProtocol {
+    public var inputs = [DataType]()
+    public var metadatas = [String : DataType]()
+    public var features = [DataType]()
+    public var transformers = [TransformProtocol]()
 
-    init() {
+    public init() {
     }
     
-    mutating func append(transformer: TransformProtocol) {
+    public mutating func append(transformer: TransformProtocol) {
         transformers.append(transformer)
     }
     
-    mutating func run(input: DataType) -> [DataType] {
+    public mutating func run(input: DataType) -> [DataType] {
         inputs.append(input)
         for transformer in transformers {
             print("--- executing \(transformer.name) transformer")
@@ -75,21 +75,20 @@ struct Pipeline : PipelineProtocol {
 
 
 // Fake Mapper
-struct FakeMapper : MapperProtocol {
-    var name: String
+public struct FakeMapper : MapperProtocol {
+    public var name: String
     
-    func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
+    public func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
         addOutput(pipeline.inputs.last!)
     }
 }
 
 
 // Fake Featurizer
-struct FakeFeaturizer : FeaturizerProtocol {
-    var name: String
+public struct FakeFeaturizer : FeaturizerProtocol {
+    public var name: String
     
-    func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
+    public func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
         addFeature(pipeline.inputs.last!)
     }
 }
-
