@@ -78,6 +78,10 @@ public struct Pipeline : PipelineProtocol {
 public struct FakeMapper : MapperProtocol {
     public var name: String
     
+    public init(name: String) {
+        self.name = name
+    }
+
     public func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
         addOutput(pipeline.inputs.last!)
     }
@@ -88,6 +92,10 @@ public struct FakeMapper : MapperProtocol {
 public struct FakeFeaturizer : FeaturizerProtocol {
     public var name: String
     
+    public init(name: String) {
+        self.name = name
+    }
+
     public func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
         addFeature(pipeline.inputs.last!)
     }
