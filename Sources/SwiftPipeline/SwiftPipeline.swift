@@ -103,11 +103,11 @@ extension DataType : Codable {
 
 // Transormer basic info used for Pipeline persistence
 public struct TransformInfo : Codable {
-    let name: String
-    let type: String
-    let metadatas: [String]?
+    public let name: String
+    public let type: String
+    public let metadatas: [String]?
     
-    init(name: String, type: Any /* TransformProtocol.Type */, metadatas: [String]? = nil) {
+    public init(name: String, type: TransformProtocol.Type, metadatas: [String]? = nil) {
         self.name = name
         self.metadatas = metadatas
         self.type = "\(type)"
