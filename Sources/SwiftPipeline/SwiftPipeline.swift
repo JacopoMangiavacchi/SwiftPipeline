@@ -107,7 +107,7 @@ public struct TransformInfo : Codable {
     let type: String
     let metadatas: [String]?
     
-    init(name: String, type: TransformProtocol.Type, metadatas: [String]? = nil) {
+    init(name: String, type: Any /* TransformProtocol.Type */, metadatas: [String]? = nil) {
         self.name = name
         self.metadatas = metadatas
         self.type = "\(type)"
