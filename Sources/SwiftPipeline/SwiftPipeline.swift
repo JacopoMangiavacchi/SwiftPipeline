@@ -10,12 +10,12 @@ import Foundation
 
 // Basic data type supported for Inputs, Outputs, Features and Metadata
 public enum DataType {
-    case String(value: String)
-    case StringArray(array: [String])
-    case Float(value: Float)
-    case FloatArray(array: [Float])
-    case Double(value: Double)
-    case DoubleArray(array: [Double])
+    case String1D(array: [String])
+    case Float1D(array: [Float])
+    case Double1D(array: [Double])
+    case String2D(array: [[String]])
+    case Float2D(array: [[Float]])
+    case Double2D(array: [[Double]])
 }
 
 // Pipeline interface passed to Transformers for accessing Pipeline input stack and metadata
