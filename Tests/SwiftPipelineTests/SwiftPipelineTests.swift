@@ -10,12 +10,13 @@ final class SwiftPipelineTests: XCTestCase {
         pipeline.append(transformer: FakeFeaturizer(name: "fakeFeaturizer1"))
         pipeline.append(transformer: FakeFeaturizer(name: "fakeFeaturizer2"))
 
-        var result = pipeline.run(input: .String(value: "Jacopo")).compactMap({ (datatype) -> String? in
-            if case .String(let value) = datatype {
-                return value
+        let s = DataType.String1D(array: ["Jacopo"])
+        var result = pipeline.run(input: s).compactMap({ (datatype) -> [[String]]? in
+            if case .String2D(let array) = datatype {
+                return array
             }
             return nil
-        })
+        })        
 
         XCTAssertEqual(result.count, 2)
         XCTAssertEqual(result[0], "Jacopo")
