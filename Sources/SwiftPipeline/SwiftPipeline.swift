@@ -8,95 +8,162 @@
 
 import Foundation
 
-// Basic data type supported for Inputs, Outputs, Features and Metadata
-public enum DataType {
-    case String0D(value: String)
-    case Float0D(value: Float)
-    case Double0D(value: Double)
-    case String1D(array: [String])
-    case Float1D(array: [Float])
-    case Double1D(array: [Double])
-    case String2D(array: [[String]])
-    case Float2D(array: [[Float]])
-    case Double2D(array: [[Double]])
+// Basic data types supported for Inputs, Outputs, Features and Metadata
+public enum DataType : String, Codable {
+    case String
+    case Float
+    case Double
 }
 
-extension DataType : Codable {
-    enum Key: CodingKey {
-        case rawValue
-        case associatedValue
+public struct DataTypeDimension : Codable {
+    public let type: DataType
+    public let dimension: Int
+}
+
+public struct PipelineData : Codable {
+    private let value: Any
+    public let typeDimension: DataTypeDimension
+    
+    public var stringValue: String { return value as! String }
+    public var stringVector: [String] { return value as! [String] }
+    public var stringMatrix: [[String]] { return value as! [[String]] }
+    public var floatValue: Float { return value as! Float }
+    public var floatVector: [Float] { return value as! [Float] }
+    public var floatMatrix: [[Float]] { return value as! [[Float]] }
+    public var doubleValue: Double { return value  as! Double }
+    public var doubleVector: [Double] { return value as! [Double] }
+    public var doubleMatrix: [[Double]] { return value as! [[Double]] }
+
+    public init(_ value: String) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .String, dimension: 0)
+    }
+
+    public init(_ value: [String]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .String, dimension: 1)
     }
     
-    enum CodingError: Error {
-        case unknownValue
+    public init(_ value: [[String]]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .String, dimension: 2)
+    }
+
+    public init(_ value: Float) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Float, dimension: 0)
+    }
+    
+    public init(_ value: [Float]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Float, dimension: 1)
+    }
+    
+    public init(_ value: [[Float]]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Float, dimension: 2)
+    }
+
+    public init(_ value: Double) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Double, dimension: 0)
+    }
+    
+    public init(_ value: [Double]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Double, dimension: 1)
+    }
+    
+    public init(_ value: [[Double]]) {
+        self.value = value
+        self.typeDimension = DataTypeDimension(type: .Double, dimension: 2)
     }
     
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: Key.self)
-        let rawValue = try container.decode(Int.self, forKey: .rawValue)
-        switch rawValue {
-        case 0:
-            let value = try container.decode(String.self, forKey: .associatedValue)
-            self = .String0D(value: value)
-        case 1:
-            let value = try container.decode(Float.self, forKey: .associatedValue)
-            self = .Float0D(value: value)
-        case 2:
-            let value = try container.decode(Double.self, forKey: .associatedValue)
-            self = .Double0D(value: value)
-        case 3:
-            let array = try container.decode([String].self, forKey: .associatedValue)
-            self = .String1D(array: array)
-        case 4:
-            let array = try container.decode([Float].self, forKey: .associatedValue)
-            self = .Float1D(array: array)
-        case 5:
-            let array = try container.decode([Double].self, forKey: .associatedValue)
-            self = .Double1D(array: array)
-        case 6:
-            let array = try container.decode([[String]].self, forKey: .associatedValue)
-            self = .String2D(array: array)
-        case 7:
-            let array = try container.decode([[Float]].self, forKey: .associatedValue)
-            self = .Float2D(array: array)
-        case 8:
-            let array = try container.decode([[Double]].self, forKey: .associatedValue)
-            self = .Double2D(array: array)
-        default:
-            throw CodingError.unknownValue
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.typeDimension = try values.decode(DataTypeDimension.self, forKey: .typeDimension)
+        switch typeDimension.type {
+        case .String:
+            switch typeDimension.dimension {
+            case 0:
+                self.value = try values.decode(String.self, forKey: .value)
+            case 1:
+                self.value = try values.decode([String].self, forKey: .value)
+            case 2:
+                self.value = try values.decode([[String]].self, forKey: .value)
+            default:
+                self.value = "ERROR" //TODO
+                break
+            }
+        case .Float:
+            switch typeDimension.dimension {
+            case 0:
+                self.value = try values.decode(Float.self, forKey: .value)
+            case 1:
+                self.value = try values.decode([Float].self, forKey: .value)
+            case 2:
+                self.value = try values.decode([[Float]].self, forKey: .value)
+            default:
+                self.value = "ERROR" //TODO
+                break
+            }
+        case .Double:
+            switch typeDimension.dimension {
+            case 0:
+                self.value = try values.decode(Double.self, forKey: .value)
+            case 1:
+                self.value = try values.decode([Double].self, forKey: .value)
+            case 2:
+                self.value = try values.decode([[Double]].self, forKey: .value)
+            default:
+                self.value = "ERROR" //TODO
+                break
+            }
         }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case typeDimension
+        case value
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: Key.self)
-        switch self {
-        case .String0D(let value):
-            try container.encode(0, forKey: .rawValue)
-            try container.encode(value, forKey: .associatedValue)
-        case .Float0D(let value):
-            try container.encode(1, forKey: .rawValue)
-            try container.encode(value, forKey: .associatedValue)
-        case .Double0D(let value):
-            try container.encode(2, forKey: .rawValue)
-            try container.encode(value, forKey: .associatedValue)
-        case .String1D(let array):
-            try container.encode(3, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
-        case .Float1D(let array):
-            try container.encode(4, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
-        case .Double1D(let array):
-            try container.encode(5, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
-        case .String2D(let array):
-            try container.encode(6, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
-        case .Float2D(let array):
-            try container.encode(7, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
-        case .Double2D(let array):
-            try container.encode(8, forKey: .rawValue)
-            try container.encode(array, forKey: .associatedValue)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(typeDimension, forKey: CodingKeys.typeDimension)
+        switch typeDimension.type {
+        case .String:
+            switch typeDimension.dimension {
+            case 0:
+                try container.encode(value as! String, forKey: CodingKeys.value)
+            case 1:
+                try container.encode(value as! [String], forKey: CodingKeys.value)
+            case 2:
+                try container.encode(value as! [[String]], forKey: CodingKeys.value)
+            default:
+                break
+            }
+        case .Float:
+            switch typeDimension.dimension {
+            case 0:
+                try container.encode(value as! Float, forKey: CodingKeys.value)
+            case 1:
+                try container.encode(value as! [Float], forKey: CodingKeys.value)
+            case 2:
+                try container.encode(value as! [[Float]], forKey: CodingKeys.value)
+            default:
+                break
+            }
+        case .Double:
+            switch typeDimension.dimension {
+            case 0:
+                try container.encode(value as! Double, forKey: CodingKeys.value)
+            case 1:
+                try container.encode(value as! [Double], forKey: CodingKeys.value)
+            case 2:
+                try container.encode(value as! [[Double]], forKey: CodingKeys.value)
+            default:
+                break
+            }
         }
     }
 }
@@ -105,9 +172,9 @@ extension DataType : Codable {
 public struct TransformInfo : Codable {
     public let name: String
     public let type: String
-    public let metadatas: [String]?
+    public let metadatas: [String]
     
-    public init(name: String, type: TransformProtocol.Type, metadatas: [String]? = nil) {
+    public init(name: String, type: Any, metadatas: [String] = [String]()) {
         self.name = name
         self.metadatas = metadatas
         self.type = "\(type)"
@@ -118,30 +185,30 @@ public struct TransformInfo : Codable {
 public protocol TransformProtocol {
     var info: TransformInfo { get }
     
-    init(name: String, metadatas: [String]?)
+    init(name: String, metadatas: [String])
 }
 
 // Specific Transform interface for implementing Mapper
 public protocol MapperProtocol : TransformProtocol {
-    func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void)
+    func transform(pipeline: PipelineProtocol, addOutput: (PipelineData) -> Void, addMetadata: (String, PipelineData) -> Void)
 }
 
 // Specific Transform interface for implementing Featurizer
 public protocol FeaturizerProtocol : TransformProtocol {
-    func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void)
+    func transform(pipeline: PipelineProtocol, addFeature: (PipelineData) -> Void, addMetadata: (String, PipelineData) -> Void)
 }
 
 // Pipeline interface passed to Transformers for accessing Pipeline input stack and metadata
 public protocol PipelineProtocol {
-    var inputs: [DataType] { get }
-    var metadatas: [String : DataType] { get }
+    var inputs: [PipelineData] { get }
+    var metadatas: [String : PipelineData] { get }
 }
 
 // Pipeline object to chain and execute several Mappar and Featurizer tranformers
-public struct Pipeline : PipelineProtocol, Encodable {
-    public var inputs = [DataType]()
-    public var metadatas = [String : DataType]()
-    public var features = [DataType]()
+public struct Pipeline : PipelineProtocol, Codable {
+    public var inputs = [PipelineData]()
+    public var metadatas = [String : PipelineData]()
+    public var features = [PipelineData]()
     public var transformers = [TransformProtocol]()
     
     enum CodingKeys: String, CodingKey {
@@ -153,7 +220,9 @@ public struct Pipeline : PipelineProtocol, Encodable {
     }
     
     public init(from decoder: Decoder) throws {
-        
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.metadatas = try values.decode([String : PipelineData].self, forKey: .metadatas)
+
         //TODO: using an Depency Injection Dictionaries of TransformProtocol  (ie [info.Type : FakeMapper.self])
     }
 
@@ -167,10 +236,10 @@ public struct Pipeline : PipelineProtocol, Encodable {
         transformers.append(transformer)
     }
     
-    public mutating func run(input: DataType) -> [DataType] {
+    public mutating func run(input: PipelineData) {
         inputs.append(input)
         
-        //TODO: Execute MapperProtocol sequentially BUT FeaturizerProtocol in parallel
+        //TODO: Execute MapperProtocols sequentially BUT FeaturizerProtocols in parallel
         
         for transformer in transformers {
             print("--- executing \(transformer.info.name) transformer")
@@ -185,8 +254,6 @@ public struct Pipeline : PipelineProtocol, Encodable {
                                       addMetadata: { (name, value) in metadatas[name] = value} )
             }
         }
-        
-        return features
     }
 }
 
@@ -194,7 +261,7 @@ public struct Pipeline : PipelineProtocol, Encodable {
 public struct FakeMapper : MapperProtocol {
     public var info: TransformInfo
 
-    public init(name: String, metadatas: [String]?) {
+    public init(name: String, metadatas: [String]) {
         self.info = TransformInfo(name: name, type: type(of: self), metadatas: metadatas)
     }
 
@@ -202,7 +269,7 @@ public struct FakeMapper : MapperProtocol {
         self.info = TransformInfo(name: name, type: type(of: self))
     }
     
-    public func transform(pipeline: PipelineProtocol, addOutput: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
+    public func transform(pipeline: PipelineProtocol, addOutput: (PipelineData) -> Void, addMetadata: (String, PipelineData) -> Void) {
         addOutput(pipeline.inputs.last!)
     }
 }
@@ -212,16 +279,16 @@ public struct FakeMapper : MapperProtocol {
 public struct FakeFeaturizer : FeaturizerProtocol {
     public var info: TransformInfo
 
-    public init(name: String, metadatas: [String]?) {
+    public init(name: String, metadatas: [String]) {
         self.info = TransformInfo(name: name, type: type(of: self), metadatas: metadatas)
+
     }
     
     public init(name: String = "FakeFeaturizer") {
         self.info = TransformInfo(name: name, type: type(of: self))
     }
     
-    public func transform(pipeline: PipelineProtocol, addFeature: (DataType) -> Void, addMetadata: (String, DataType) -> Void) {
+    public func transform(pipeline: PipelineProtocol, addFeature: (PipelineData) -> Void, addMetadata: (String, PipelineData) -> Void) {
         addFeature(pipeline.inputs.last!)
     }
 }
-
