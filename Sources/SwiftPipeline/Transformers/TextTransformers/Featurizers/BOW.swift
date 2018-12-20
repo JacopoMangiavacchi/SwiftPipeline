@@ -70,17 +70,17 @@ public struct BOW : TransformProtocol, Codable {
 
     //Parameters: NB read only (let)
     private let keyType: KeyType
-    private let gramSize: Int
+    private let ngramLength: Int
     private let valueType: ValueType
 
     //Metadata: NB access on write must be protected for concurrency access if this is a .Mapper
     public var vocabulary: [String : DataFloat]
 
-    public init(name: String = "BOW", keyType: KeyType = .WordGram, gramSize: Int = 1, valueType: ValueType = .TFIDF(minCount: 1)) {
+    public init(name: String = "BOW", keyType: KeyType = .WordGram, ngramLength: Int = 1, valueType: ValueType = .TFIDF(minCount: 1)) {
         self.name = name
         self.transformerType = .Featurizer
         self.keyType = keyType
-        self.gramSize = gramSize
+        self.ngramLength = ngramLength
         self.valueType = valueType
         self.vocabulary = [String : DataFloat]()
     }
@@ -110,7 +110,7 @@ public struct BOW : TransformProtocol, Codable {
                 switch keyType {
                 case .WordGram:
                     var nGram = String()
-                    let m = min(gramSize, inputVector.count - wordStartPos)
+                    let m = min(ngramLength, inputVector.count - wordStartPos)
                     for pos in 0..<m {
                         if pos > 0 {
                             nGram += " \(inputVector[wordStartPos + pos])"
@@ -123,7 +123,7 @@ public struct BOW : TransformProtocol, Codable {
                     }
 
                 case .CharGram:
-                    let size = max(1, gramSize)
+                    let size = max(1, ngramLength)
                     let word = size == 1 ? inputVector[wordStartPos] : " \(inputVector[wordStartPos]) "
                     for charStartPos in 0...max(0, word.count - size) {
                         let startIndex = word.index(word.startIndex, offsetBy: charStartPos)
