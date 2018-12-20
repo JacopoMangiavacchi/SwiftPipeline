@@ -75,35 +75,35 @@ public typealias MatrixDataIO = [[DataIO]]
 public typealias VectorDataIO = [DataIO]
 
 extension Sequence where Iterator.Element == VectorDataIO {
-    func toMatrixDataFlow() -> MatrixDataFloat {
+    public func toMatrixDataFlow() -> MatrixDataFloat {
         return self.map { $0.compactMap{ $0.toDataFloat() } }
     }
 
-    func toMatrixDataString() -> MatrixDataString {
+    public func toMatrixDataString() -> MatrixDataString {
         return self.map { $0.compactMap{ $0.toDataString() } }
     }
 }
 
 extension Sequence where Iterator.Element == VectorDataFloat {
-    func toMatrixDataIO() -> MatrixDataIO {
+    public func toMatrixDataIO() -> MatrixDataIO {
         return self.map { $0.map{ DataIO.DataFloat(value: $0) } }
     }
 }
 
 extension Sequence where Iterator.Element == VectorDataString {
-    func toMatrixDataIO() -> MatrixDataIO {
+    public func toMatrixDataIO() -> MatrixDataIO {
         return self.map { $0.map{ DataIO.DataString(value: $0) } }
     }
 }
 
 extension Sequence where Iterator.Element == DataFloat {
-    func toVectorDataIO() -> VectorDataIO {
+    public func toVectorDataIO() -> VectorDataIO {
         return self.map { DataIO.DataFloat(value: $0) }
     }
 }
 
 extension Sequence where Iterator.Element == DataString {
-    func toVectorDataIO() -> VectorDataIO {
+    public func toVectorDataIO() -> VectorDataIO {
         return self.map { DataIO.DataString(value: $0) }
     }
 }
