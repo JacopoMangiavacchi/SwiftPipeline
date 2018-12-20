@@ -249,7 +249,7 @@ public struct Classifier : Codable {
             var binaryTestLabels = [[[Int]]](repeating: [[Int]](), count: trainedLabels.count)
             for i in 0..<trainedLabels.count {
                 binaryTrainLabels[i] = trainLabels.map { $0.contains(i) ? [1] : [0] }
-                binaryTestLabels[i] = trainLabels.map { $0.contains(i) ? [1] : [0] }
+                binaryTestLabels[i] = testLabels.map { $0.contains(i) ? [1] : [0] }
             }
 
             //Prepare array of Binary Train Results
