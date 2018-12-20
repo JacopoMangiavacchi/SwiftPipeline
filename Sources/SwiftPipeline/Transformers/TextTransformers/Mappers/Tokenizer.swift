@@ -9,7 +9,7 @@
 import Foundation
 
 // Tokenizer Mapper
-struct Tokenizer : TransformProtocol, Codable {
+public struct Tokenizer : TransformProtocol, Codable {
     //Base Properties
     public let name: DataString
     public let transformerType: TransformType
