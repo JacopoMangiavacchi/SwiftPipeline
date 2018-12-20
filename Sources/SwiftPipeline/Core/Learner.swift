@@ -25,6 +25,8 @@ public struct LearnerInfo : Codable {
 
 // Learner Train Result info
 public struct TrainResult : Codable {
+    public let cost: Float
+    public let euclideanDistance: Float
     public let f1: Float
     public let microAvgAccuracy: Float
     public let macroAvgAccuracy: Float
@@ -32,6 +34,8 @@ public struct TrainResult : Codable {
     public let recall: [Float]
 
     public init() {
+        cost = 0.0
+        euclideanDistance = 0.0
         f1 = 0.0
         microAvgAccuracy = 0.0
         macroAvgAccuracy = 0.0
@@ -40,11 +44,23 @@ public struct TrainResult : Codable {
     }
 
     public init(f1: Float, microAvgAccuracy: Float, macroAvgAccuracy: Float, precision: [Float], recall: [Float]) {
+        self.cost = 0.0
+        self.euclideanDistance = 0.0
         self.f1 = f1
         self.microAvgAccuracy = microAvgAccuracy
         self.macroAvgAccuracy = macroAvgAccuracy
         self.precision = precision
         self.recall = recall
+    }
+
+    public init(cost: Float, euclideanDistance: Float) {
+        self.cost = cost
+        self.euclideanDistance = euclideanDistance
+        self.f1 = 0.0
+        self.microAvgAccuracy = 0.0
+        self.macroAvgAccuracy = 0.0
+        self.precision = [Float]()
+        self.recall = [Float]()
     }
 }
 
