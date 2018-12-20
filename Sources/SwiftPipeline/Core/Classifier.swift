@@ -287,12 +287,16 @@ public struct Classifier : Codable {
             }
 
             //Summirize Train results from different Binary Learners
+            var cost = Float(0)
+            var euclideanDistance = Float(0)
             var f1 = Float(0)
             var microAvgAccuracy = Float(0)
             var macroAvgAccuracy = Float(0)
             var precision = [Float]()
             var recall = [Float]()
             for result in binaryTrainResults {
+                cost += result.cost
+                euclideanDistance += result.euclideanDistance
                 f1 += result.f1
                 microAvgAccuracy += result.microAvgAccuracy
                 macroAvgAccuracy += result.macroAvgAccuracy
@@ -301,11 +305,15 @@ public struct Classifier : Codable {
             }
 
             //Average f1 and Accuracies
+            cost /= Float(trainedLabels.count)
+            euclideanDistance /= Float(trainedLabels.count)
             f1 /= Float(trainedLabels.count)
             microAvgAccuracy /= Float(trainedLabels.count)
             macroAvgAccuracy /= Float(trainedLabels.count)
 
-            return TrainResult(f1: f1, 
+            return TrainResult(cost: cost,
+                               euclideanDistance: euclideanDistance,
+                               f1: f1, 
                                microAvgAccuracy: microAvgAccuracy, 
                                macroAvgAccuracy: macroAvgAccuracy, 
                                precision: precision, 

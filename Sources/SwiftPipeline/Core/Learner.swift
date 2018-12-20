@@ -43,6 +43,16 @@ public struct TrainResult : Codable {
         recall = [Float]()
     }
 
+    public init(cost: Float, euclideanDistance: Float, f1: Float, microAvgAccuracy: Float, macroAvgAccuracy: Float, precision: [Float], recall: [Float]) {
+        self.cost = cost
+        self.euclideanDistance = euclideanDistance
+        self.f1 = f1
+        self.microAvgAccuracy = microAvgAccuracy
+        self.macroAvgAccuracy = macroAvgAccuracy
+        self.precision = precision
+        self.recall = recall
+    }
+
     public init(f1: Float, microAvgAccuracy: Float, macroAvgAccuracy: Float, precision: [Float], recall: [Float]) {
         self.cost = 0.0
         self.euclideanDistance = 0.0
