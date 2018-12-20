@@ -12,18 +12,18 @@ final class SwiftPipelineTests: XCTestCase {
                     "that is a a document that really duplicate that",
                     "Loving the opening debates rap game Kathy Crowley October 20 - Bruno Mars http://t.co/jyQ3lqbU"]
 
-        let labels = [["label1"], 
-                    ["label0"],
-                    ["label2", "label0"],
-                    ["label2"],
-                    ["label2"],
-                    ["label0"],
-                    ["label1"],
-                    ["label0"]]
+        // let labels = [["label1"], 
+        //             ["label0"],
+        //             ["label2", "label0"],
+        //             ["label2"],
+        //             ["label2"],
+        //             ["label0"],
+        //             ["label1"],
+        //             ["label0"]]
 
-        let test = ["Sample Text", "second Text"]
+        // let test = ["Sample Text", "second Text"]
 
-        let pipeline = Pipeline(transformers: [//FastText(fastTextModelPath: "/Jacopo/fastText/model.bin"), 
+        var pipeline = Pipeline(transformers: [//FastText(fastTextModelPath: "/Jacopo/fastText/model.bin"), 
                                             MultiRegex(regexValues: ["\\$\\ ?[+-]?[0-9]{1,3}(?:,?[0-9])*(?:\\.[0-9]{1,2})?"]), 
                                             Tokenizer(separators: " .,!?-", stopWords: ["text", "like"]), 
                                             BOW(name: "Words"), 
@@ -35,16 +35,19 @@ final class SwiftPipelineTests: XCTestCase {
                                     splitRate: 0.3,
                                     minNumberOfRowInSplit: 3)
 
-        var classifier = Classifier(pipeline: pipeline,
-                                    learners: [LogisticRegression()], 
-                                    splitTest: 0.3)
+        try! pipeline.transform(input: data)
 
-        //TRAINING
-        try! classifier.train(input: data, labels: labels)
 
-        //SCORING
-        let prediction = try! classifier.predict(input: test) 
-        print(prediction)
+        // var classifier = Classifier(pipeline: pipeline,
+        //                             learners: [LogisticRegression()], 
+        //                             splitTest: 0.3)
+
+        // //TRAINING
+        // try! classifier.train(input: data, labels: labels)
+
+        // //SCORING
+        // let prediction = try! classifier.predict(input: test) 
+        // print(prediction)
 
 
         // //Test Serialization
