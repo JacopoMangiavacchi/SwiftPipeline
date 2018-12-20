@@ -24,7 +24,6 @@ public struct Pipeline : Codable {
                                                       "FakeMapper" : FakeMapper.self, 
                                                       "BinaryDictionary" : BinaryDictionary.self, 
                                                       "BOW" : BOW.self, 
-                                                      "FastText" : FastText.self, 
                                                       "MultiDictionary" : MultiDictionary.self, 
                                                       "MultiRegex" : MultiRegex.self, 
                                                       "Tokenizer" : Tokenizer.self, 
