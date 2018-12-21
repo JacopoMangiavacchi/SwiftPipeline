@@ -233,7 +233,7 @@ public struct BOW : TransformProtocol, Codable {
     }
 
     private func TFIDF(numberOfDocs: DataFloat, datasetFreq: DataFloat, docFreq: DataFloat) -> DataFloat {
-        return docFreq * log(numberOfDocs / (1.0 + docFreq))
+        return docFreq * (numberOfDocs / (1.0 + docFreq)) //log(numberOfDocs / (1.0 + docFreq))
     }
 
     private func L2Normalize(vectors: MatrixDataFloat) -> MatrixDataFloat {
