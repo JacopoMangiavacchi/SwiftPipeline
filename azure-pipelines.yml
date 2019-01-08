@@ -1,0 +1,33 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- bash: |
+    set -e
+    
+    sudo apt-get update
+    sudo apt-get install clang libicu-dev
+    sudo wget https://swift.org/builds/swift-4.2-branch/ubuntu1604/swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a/swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a-ubuntu16.04.tar.gz
+    sudo tar xzf swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a-ubuntu16.04.tar.gz
+    export PATH=swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a-ubuntu16.04/usr/bin:"${PATH}"
+  displayName: 'Install Swift'
+
+- bash: |
+    set -e
+    
+    sudo swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a-ubuntu16.04/usr/bin/swift build
+  displayName: 'Build'
+
+- bash: |
+    set -e
+    
+    sudo swift-4.2-DEVELOPMENT-SNAPSHOT-2018-10-30-a-ubuntu16.04/usr/bin/swift test
+  displayName: 'Test'
